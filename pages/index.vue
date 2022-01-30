@@ -5,7 +5,7 @@
         v-card-title 現在のブロックの高さ
         v-row(align="end" )
           v-col(cols="12" align-self="end" style="text-align:end")
-            p.text-h2.text-right.px-3 {{blockchain.length}}
+            p.text-h2.text-right.text--blue.px-3 {{"#"+height}}
     v-col(cols="12" sm="8" md="6")
       v-card
         v-card-title 書き込み待ちのデータ
@@ -13,7 +13,7 @@
           v-col(cols="12" align-self="end" v-for="(tra,i) in currentData.split(`\n`)" )
             p.px-3 {{getTransactionDesc(tra)}}
     v-divider
-    p ↓ブロックチェーン
+    // p ↓ブロックチェーン
     v-col(cols="12")
       v-expansion-panels
         v-expansion-panel(v-for="(item,i) in blockchain.slice().reverse()" :key="i")
@@ -30,17 +30,18 @@ export default {
   data() {
     return {
       blockchain: [],
-      currentData: ""
+      currentData: "",
+      height: 0
     }
   },
   methods: {
-    async getBlockChain() {
-      const result = await fetch("https://nftfesta.kokoa.dev/getBlockChain?json=true")
-      this.blockchain = await result.json()
-    },
     async getCurrentData() {
       const result = await fetch("https://nftfesta.kokoa.dev/getCurrentData")
       this.currentData = await result.text()
+    },
+    async getBlockHeight() {
+      const result = await fetch("https://nftfesta.kokoa.dev/height")
+      this.height = await result.text()
     },
     getMineUser(item) {
       const array = item.data.split(":")
@@ -90,12 +91,14 @@ export default {
     }
   },
   mounted() {
-    this.getBlockChain()
+    // this.getBlockChain()
     this.getCurrentData()
+    this.getBlockHeight()
     setInterval(() => {
-      this.getBlockChain()
+      // this.getBlockChain()
       this.getCurrentData()
-    },2000)
+      this.getBlockHeight()
+    }, 2000)
   }
 }
 </script>
